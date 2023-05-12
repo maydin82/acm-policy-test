@@ -1,0 +1,32 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policy-acm-generator
+placementBindingDefaults:
+  name: acm-binding 
+policyDefaults:
+  categories:
+    - CM Configuration Management
+  controls: 
+    - CM-2 Baseline Configuration
+  namespace: acm-policies
+  remediationAction: enforce
+  severity: medium
+  policySets:
+    - openshift-plus-acm-config
+  standards:
+    - NIST SP 800-53
+policies:
+- name: project
+  manifests:
+    - path: ./project
+
+policySets:
+  - description: The OpenShift Platform Plus policy set applies several policies
+      that will install the OpenShift Platform Plus products using best practices
+      that allow them to work well together. This policy set is focused on 
+      the components that install to the Advanced Cluster Management hub.
+    name: openshift-plus-acm-config
+    placement:
+      placementName: placement-openshift-plus-hub
+

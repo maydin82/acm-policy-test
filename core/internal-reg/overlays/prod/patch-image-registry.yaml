@@ -1,0 +1,20 @@
+- op: add
+  path: '/spec/storage'
+  value: 
+    managementState: Unmanaged
+    s3:
+      bucket: '{{ fromConfigMap "openshift-storage" "obc-internalreg" "BUCKET_NAME" }}'
+      encrypt: false
+      region: us-east-1
+      regionEndpoint: https://{{ (lookup "route.openshift.io/v1"  "Route" "openshift-storage" "s3").spec.host }}
+      trustedCA:
+        name: image-registry-s3-bundle
+      virtualHostedStyle: false
+- op: replace
+  path: '/spec/replicas'
+  value: 1
+
+- op: add
+  path: '/spec/defaultRoute'
+  value: true
+

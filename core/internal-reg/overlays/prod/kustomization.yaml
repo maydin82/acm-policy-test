@@ -1,0 +1,9 @@
+resources:
+  - ../../base
+  - policy-configmap.yaml
+  - policy-object-storage.yaml
+  - policy-internalregsecret.yaml
+patches:
+- target:
+    kind: Config
+  path: patch-image-registry.yaml
