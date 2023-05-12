@@ -5,7 +5,6 @@ metadata:
   namespace: open-cluster-management-observability
 type: Opaque
 data:
-thanos.yaml: |
     {{- /* read the bucket data and noobaa endpoint access data */ -}}
     {{- $objBucket := (lookup "objectbucket.io/v1alpha1" "ObjectBucket" "" "obc-openshift-storage-obc-observability") }}
     {{- $awsAccess := (lookup "v1" "Secret" "openshift-storage" "noobaa-admin") }}
@@ -20,38 +19,9 @@ thanos.yaml: |
       secret_key: %[4]s
     ` }}
       {{- /* create the secret using the thanos configuration template created above. */ -}}
-    - complianceType: mustonlyhave
-      objectDefinition:
-        apiVersion: v1
-        kind: Secret
-        metadata:
-          name: thanos-object-storage
-          namespace: open-cluster-management-observability
-        type: Opaque
-        data:
-          thanos.yaml: {{ (printf $thanosConfig $objBucket.spec.endpoint.bucketName 
-                                                $objBucket.spec.endpoint.bucketHost 
-                                                ($awsAccess.data.AWS_ACCESS_KEY_ID | base64dec) 
-                                                ($awsAccess.data.AWS_SECRET_ACCESS_KEY | base64dec)
-                          ) | base64enc }}
----
-apiVersion: observability.open-cluster-management.io/v1beta2
-kind: MultiClusterObservability
-metadata:
-  name: observability
-spec:
-  enableDownsampling: true
-  observabilityAddonSpec:
-    enableMetrics: true
-    interval: 300
-  storageConfig:
-    metricObjectStorage:
-      name: thanos-object-storage
-      key: thanos.yaml
-    alertmanagerStorageSize: 1Gi
-    compactStorageSize: 100Gi
-    receiveStorageSize: 100Gi
-    ruleStorageSize: 1Gi
-    storageClass: gp2
-    storeStorageSize: 10Gi
+  thanos.yaml: {{ (printf $thanosConfig $objBucket.spec.endpoint.bucketName 
+                                        $objBucket.spec.endpoint.bucketHost 
+                                        ($awsAccess.data.AWS_ACCESS_KEY_ID | base64dec) 
+                                        ($awsAccess.data.AWS_SECRET_ACCESS_KEY | base64dec)
+                  ) | base64enc }}
 
